@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2b209c38-909d-4b3c-9772-9604cca3f1e9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="8e0d1e1a-4368-4004-ae5f-ccf4c5f4ae97" >
+		<file:connection workingDir="C:\Users\Admin\Desktop\test" />
+	</file:config>
+	<flow name="datetimeFlow" doc:id="123840c3-940a-4e91-bc3d-804028e3c7b6" >
+		<http:listener doc:name="Listener" doc:id="85f38efb-0900-48dd-9e53-90338317b7a8" config-ref="HTTP_Listener_config" path="/date" allowedMethods="GET"/>
+		<scripting:execute engine="groovy" doc:name="Execute" doc:id="cb9a3cb0-952a-4ee9-9036-d244ede53e72" targetValue="#[output application/json
+---
+payload]">
+			<scripting:code><![CDATA[
+String startD = '01-01-2019'
+Date start = Date.parse( 'dd-MM-yyyy' , startD )
+Date now = new Date()
+for (start; start < now; start ++) {
+  	println start.toString()	
+  	
+}
+]]></scripting:code>
+		</scripting:execute>
+		<logger level="INFO" doc:name="Logger" doc:id="bf00af4c-7905-48bd-abe9-56390cd9a5a0" message="#[payload]"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="ddb66763-0c43-4f07-afcb-05ca9c071a7c" />
+	</flow>
+</mule>
